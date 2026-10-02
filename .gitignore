@@ -1,0 +1,43 @@
+# ==========================================
+# Variáveis de Ambiente e Segredos (CRÍTICO)
+# ==========================================
+.env
+.env.local
+.env.*.local
+*.pem
+
+# ==========================================
+# Compilação e Build
+# ==========================================
+dist/
+build/
+out/
+.next/
+
+# ==========================================
+# Logs e Cobertura de Testes
+# ==========================================
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+coverage/
+
+# ==========================================
+# Arquivos de IDEs e Sistema Operacional
+# ==========================================
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/settings.json
+.idea/
+
+# ==========================================
+# Uploads locais ou arquivos temporários
+# ==========================================
+uploads/
+temp/
+*.sqlite
+venv/
+.venv

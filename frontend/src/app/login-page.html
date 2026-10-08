@@ -1,0 +1,231 @@
+<main class="login-page">
+  <div class="auth-stack">
+    <section class="login-card" aria-labelledby="login-title">
+      <img class="qorvus-logo" src="/assets/qorvus-logo.png" alt="Qorvus" />
+
+      @if (isRegistering()) {
+        <h1 id="login-title">Criar uma conta</h1>
+        <p class="card-subtitle">Cadastre sua empresa e seu acesso empresarial.</p>
+
+        <form
+          class="registration-form"
+          [formGroup]="registerForm"
+          (ngSubmit)="onSubmit()"
+          novalidate
+        >
+          <div class="field-group">
+            <label for="company-name">Nome da empresa:</label>
+            <input
+              id="company-name"
+              type="text"
+              formControlName="companyName"
+              autocomplete="organization"
+              maxlength="150"
+            />
+            @if (
+              registerForm.controls.companyName.invalid && registerForm.controls.companyName.touched
+            ) {
+              <span class="field-error">Informe o nome da empresa.</span>
+            }
+          </div>
+
+          <div class="field-row">
+            <div class="field-group">
+              <label for="cnpj">CNPJ:</label>
+              <input
+                id="cnpj"
+                type="text"
+                formControlName="cnpj"
+                inputmode="numeric"
+                placeholder="14 dígitos"
+                maxlength="14"
+              />
+              @if (registerForm.controls.cnpj.invalid && registerForm.controls.cnpj.touched) {
+                <span class="field-error">Informe um CNPJ válido com 14 dígitos.</span>
+              }
+            </div>
+            <div class="field-group">
+              <label for="cpf">CPF:</label>
+              <input
+                id="cpf"
+                type="text"
+                formControlName="cpf"
+                inputmode="numeric"
+                placeholder="11 dígitos"
+                maxlength="11"
+              />
+              @if (registerForm.controls.cpf.invalid && registerForm.controls.cpf.touched) {
+                <span class="field-error">Informe um CPF válido com 11 dígitos.</span>
+              }
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label for="full-name">Nome do responsável:</label>
+            <input
+              id="full-name"
+              type="text"
+              formControlName="fullName"
+              autocomplete="name"
+              maxlength="100"
+            />
+            @if (registerForm.controls.fullName.invalid && registerForm.controls.fullName.touched) {
+              <span class="field-error">Informe seu nome completo.</span>
+            }
+          </div>
+
+          <div class="field-row">
+            <div class="field-group">
+              <label for="register-email">E-mail:</label>
+              <input
+                id="register-email"
+                type="email"
+                formControlName="registerEmail"
+                autocomplete="email"
+                maxlength="70"
+              />
+              @if (
+                registerForm.controls.registerEmail.invalid &&
+                registerForm.controls.registerEmail.touched
+              ) {
+                <span class="field-error">Informe um e-mail válido.</span>
+              }
+            </div>
+            <div class="field-group">
+              <label for="phone">Telefone:</label>
+              <input
+                id="phone"
+                type="tel"
+                formControlName="phone"
+                autocomplete="tel"
+                maxlength="20"
+              />
+              @if (registerForm.controls.phone.invalid && registerForm.controls.phone.touched) {
+                <span class="field-error">Informe seu telefone.</span>
+              }
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field-group">
+              <label for="register-password">Senha:</label>
+              <input
+                id="register-password"
+                type="password"
+                formControlName="registerPassword"
+                autocomplete="new-password"
+              />
+              @if (
+                registerForm.controls.registerPassword.invalid &&
+                registerForm.controls.registerPassword.touched
+              ) {
+                <span class="field-error">Use uma senha com pelo menos 8 caracteres.</span>
+              }
+            </div>
+            <div class="field-group">
+              <label for="confirm-password">Confirmar senha:</label>
+              <input
+                id="confirm-password"
+                type="password"
+                formControlName="confirmPassword"
+                autocomplete="new-password"
+              />
+              @if (
+                registerForm.controls.confirmPassword.touched &&
+                registerForm.controls.confirmPassword.hasError('required')
+              ) {
+                <span class="field-error">Confirme sua senha.</span>
+              } @else if (
+                registerForm.controls.confirmPassword.touched &&
+                registerForm.hasError('passwordMismatch')
+              ) {
+                <span class="field-error">As senhas não coincidem.</span>
+              }
+            </div>
+          </div>
+
+          <button class="primary-button" type="submit" [disabled]="isSubmitting()">
+            {{ isSubmitting() ? 'Criando conta...' : 'Criar minha conta' }}
+          </button>
+          @if (notice()) {
+            <p class="form-notice" role="status">{{ notice() }}</p>
+          }
+        </form>
+
+        <p class="switch-mode">
+          Já tem uma conta?
+          <button type="button" (click)="setRegistrationMode(false)">Entrar</button>
+        </p>
+      } @else {
+        <h1 id="login-title">Login</h1>
+
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
+          <div class="field-group">
+            <label for="email">E-mail:</label>
+            <input
+              id="email"
+              type="email"
+              formControlName="email"
+              autocomplete="username"
+              [attr.aria-invalid]="email.invalid && email.touched"
+              aria-describedby="email-error"
+            />
+            @if (email.invalid && email.touched) {
+              <span class="field-error" id="email-error">
+                @if (email.hasError('required')) {
+                  Informe seu e-mail.
+                } @else {
+                  Digite um e-mail válido.
+                }
+              </span>
+            }
+          </div>
+
+          <div class="field-group">
+            <label for="password">Senha:</label>
+            <input
+              id="password"
+              type="password"
+              formControlName="password"
+              autocomplete="current-password"
+              [attr.aria-invalid]="password.invalid && password.touched"
+              aria-describedby="password-error"
+            />
+            @if (password.invalid && password.touched) {
+              <span class="field-error" id="password-error">
+                @if (password.hasError('required')) {
+                  Informe sua senha.
+                } @else {
+                  A senha deve ter pelo menos 6 caracteres.
+                }
+              </span>
+            }
+          </div>
+
+          <button class="primary-button login-submit" type="submit" [disabled]="isSubmitting()">
+            {{ isSubmitting() ? 'Entrando...' : 'Entrar' }}
+          </button>
+          @if (notice()) {
+            <p class="form-notice" role="status">{{ notice() }}</p>
+          }
+
+          <button class="forgot-password" type="button" (click)="showRecoveryNotice()">
+            Esqueci minha senha
+          </button>
+
+          <label class="remember-option">
+            <input type="checkbox" formControlName="rememberMe" />
+            <span>Manter conectado</span>
+          </label>
+        </form>
+      }
+    </section>
+
+    @if (!isRegistering()) {
+      <section class="signup-card" aria-label="Criar conta empresarial">
+        <p>É novo por aqui?</p>
+        <button type="button" (click)="setRegistrationMode(true)">Criar uma conta</button>
+      </section>
+    }
+  </div>
+</main>

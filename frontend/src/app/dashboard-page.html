@@ -1,0 +1,377 @@
+<div class="dashboard-shell">
+  <aside class="sidebar" [class.sidebar-open]="mobileMenuOpen()" aria-label="Navegação principal">
+    <a class="brand" routerLink="/dashboard" aria-label="Qorvus — visão geral">
+      <span class="brand-mark">
+        <img src="/assets/qorvus-logo.png" alt="" />
+      </span>
+      <span class="brand-name">qorvus<span>.</span></span>
+    </a>
+
+    <div class="workspace-switcher">
+      <span class="workspace-avatar">
+        {{ company()?.nome_empresa?.charAt(0) ?? 'Q' }}
+      </span>
+      <span class="workspace-copy">
+        <span class="workspace-label">ESPAÇO DE TRABALHO</span>
+        <span class="workspace-name">{{ company()?.nome_empresa ?? 'Carregando empresa...' }}</span>
+      </span>
+      <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m6 8 4 4 4-4" /></svg>
+    </div>
+
+    <p class="nav-heading">MENU PRINCIPAL</p>
+    <nav class="primary-nav" aria-label="Menu principal">
+      @for (item of primaryNavigation; track item.label) {
+        <button
+          class="nav-item"
+          [class.nav-item-active]="item.label === 'Visão geral'"
+          [attr.aria-current]="item.label === 'Visão geral' ? 'page' : null"
+          type="button"
+          (click)="showSectionNotice(item.label)"
+        >
+          @switch (item.icon) {
+            @case ('home') {
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="m3.5 10 8.5-7 8.5 7v10a1 1 0 0 1-1 1h-5.2v-6.4h-4.6V21H4.5a1 1 0 0 1-1-1z"
+                />
+              </svg>
+            }
+            @case ('box') {
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="m12 3 8.5 4.5v9L12 21l-8.5-4.5v-9z" />
+                <path d="m3.8 7.7 8.2 4.5 8.2-4.5M12 21v-8.8M8 5.1l8.4 4.7" />
+              </svg>
+            }
+            @case ('history') {
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M3.5 12a8.5 8.5 0 1 0 2.5-6M3 4v5h5M12 7v5l3.5 2" />
+              </svg>
+            }
+            @case ('chart') {
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 19V5m0 14h16M7.5 15l4-4 3 2 5-6" />
+                <path d="M16.5 7H20v3.5" />
+              </svg>
+            }
+          }
+          <span>{{ item.label }}</span>
+          @if (item.label === 'Catálogo') {
+            <span class="nav-count">{{ summary()?.total_produtos ?? 0 }}</span>
+          }
+        </button>
+      }
+    </nav>
+
+    <div class="sidebar-spacer"></div>
+    <p class="nav-heading team-heading">EQUIPE</p>
+    <button class="nav-item team-link" type="button" (click)="showSectionNotice('Funcionários')">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path
+          d="M16 20v-1.5a3.5 3.5 0 0 0-3.5-3.5h-5A3.5 3.5 0 0 0 4 18.5V20m6-9a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Zm6-6.7a3.5 3.5 0 0 1 0 6.8m4 8.9v-1.5a3.5 3.5 0 0 0-2.5-3.35"
+        />
+      </svg>
+      <span>Funcionários</span>
+    </button>
+    <div class="sidebar-footer">
+      <span class="avatar avatar-small">{{ user()?.nome_completo?.charAt(0) ?? 'U' }}</span>
+      <span class="account-copy">
+        <strong>{{ user()?.nome_completo ?? 'Usuário' }}</strong>
+        <span>{{ user()?.perfil === 'ADMINISTRADOR' ? 'Administrador' : 'Funcionário' }}</span>
+      </span>
+      <button class="sign-out" type="button" aria-label="Sair" (click)="logout()">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M10 17l5-5-5-5m5 5H3m9-9h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6" />
+        </svg>
+      </button>
+    </div>
+  </aside>
+
+  @if (mobileMenuOpen()) {
+    <button
+      class="mobile-scrim"
+      type="button"
+      aria-label="Fechar menu"
+      (click)="toggleMobileMenu()"
+    ></button>
+  }
+
+  <main class="main-content">
+    <header class="topbar">
+      <button
+        class="mobile-menu-toggle"
+        type="button"
+        aria-label="Abrir menu"
+        [attr.aria-expanded]="mobileMenuOpen()"
+        (click)="toggleMobileMenu()"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
+      </button>
+      <div class="breadcrumb">
+        <span>{{ company()?.nome_empresa ?? 'Empresa' }}</span>
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m7 4 6 6-6 6" /></svg>
+        <strong>Visão geral</strong>
+      </div>
+      <div class="topbar-actions">
+        <span class="today-date">{{ todayLabel }}</span>
+        <button
+          class="icon-button notification-button"
+          type="button"
+          aria-label="Notificações: 2 alertas de estoque baixo"
+          (click)="showSectionNotice('Notificações')"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9m-8 12h4" />
+          </svg>
+          <span class="notification-dot"></span>
+        </button>
+        <span class="topbar-avatar" aria-hidden="true">
+          {{ user()?.nome_completo?.charAt(0) ?? 'U' }}
+        </span>
+      </div>
+    </header>
+
+    <div class="page-content">
+      <div class="welcome-row">
+        <div>
+          <p class="eyebrow">RESUMO DE ESTOQUE</p>
+          <h1>Olá, {{ user()?.nome_completo ?? 'usuário' }} <span aria-hidden="true">✦</span></h1>
+          <p class="welcome-subtitle">Aqui está o resumo do que está acontecendo no seu estoque.</p>
+        </div>
+        <button
+          class="period-button"
+          type="button"
+          (click)="showSectionNotice('Filtro de período')"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M7 3v3m10-3v3M4 9h16M5 5h14a1 1 0 0 1 1 1v13H4V6a1 1 0 0 1 1-1Z" />
+          </svg>
+          Últimos 7 dias
+          <svg class="period-chevron" viewBox="0 0 20 20" aria-hidden="true">
+            <path d="m6 8 4 4 4-4" />
+          </svg>
+        </button>
+      </div>
+
+      @if (navigationNotice()) {
+        <div class="prototype-notice" role="status">
+          <span>{{ navigationNotice() }}</span>
+          <button type="button" aria-label="Fechar aviso" (click)="dismissSectionNotice()">
+            ×
+          </button>
+        </div>
+      }
+
+      @if (loadError()) {
+        <div class="prototype-notice" role="alert">
+          <span>{{ loadError() }}</span>
+        </div>
+      }
+
+      @if (loading()) {
+        <div class="prototype-notice" role="status">Carregando os dados da sua empresa...</div>
+      }
+
+      <section class="metric-grid" aria-label="Resumo do estoque">
+        <article class="metric-card">
+          <div class="metric-icon metric-icon-blue">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 7h16v13H4zM8 4h8v3M8 11h8m-8 4h5" />
+            </svg>
+          </div>
+          <div class="metric-copy">
+            <span class="metric-label">Total de produtos</span>
+            <strong>{{ summary()?.total_produtos ?? '—' }}</strong>
+            <span class="metric-detail">ativos no catálogo</span>
+          </div>
+        </article>
+        <article class="metric-card">
+          <div class="metric-icon metric-icon-green">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m-6 6 6-6 6 6" /></svg>
+          </div>
+          <div class="metric-copy">
+            <span class="metric-label">Entradas <span>(7 dias)</span></span>
+            <strong class="value-green">{{ summary()?.entradas_7_dias ?? '—' }}</strong>
+            <span class="metric-detail">unidades recebidas</span>
+          </div>
+        </article>
+        <article class="metric-card">
+          <div class="metric-icon metric-icon-red">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14m6-6-6 6-6-6" /></svg>
+          </div>
+          <div class="metric-copy">
+            <span class="metric-label">Saídas <span>(7 dias)</span></span>
+            <strong class="value-red">{{ summary()?.saidas_7_dias ?? '—' }}</strong>
+            <span class="metric-detail">unidades vendidas</span>
+          </div>
+        </article>
+        <article class="metric-card metric-card-warning">
+          <div class="metric-icon metric-icon-amber">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M12 8v5m0 3h.01M10.3 4.8 2.9 18a1.5 1.5 0 0 0 1.3 2.2h15.6a1.5 1.5 0 0 0 1.3-2.2L13.7 4.8a2 2 0 0 0-3.4 0Z"
+              />
+            </svg>
+          </div>
+          <div class="metric-copy">
+            <span class="metric-label">Estoque baixo</span>
+            <strong class="value-amber">{{ summary()?.itens_estoque_baixo ?? '—' }}</strong>
+            <span class="metric-detail">produtos precisam de atenção</span>
+          </div>
+          <span class="attention-label">Atenção</span>
+        </article>
+      </section>
+
+      <section class="insights-grid" aria-label="Análises do estoque">
+        <article class="panel movement-chart">
+          <div class="panel-heading">
+            <div>
+              <h2>Movimentações</h2>
+              <p>Entradas e saídas do seu estoque</p>
+            </div>
+            <button class="text-action" type="button" (click)="showSectionNotice('Relatórios')">
+              Ver relatório
+              <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h12m-5-5 5 5-5 5" /></svg>
+            </button>
+          </div>
+          <div class="chart-legend">
+            <span><i class="legend-dot legend-in"></i>Entradas</span>
+            <span><i class="legend-dot legend-out"></i>Saídas</span>
+            <span class="chart-unit">unidades</span>
+          </div>
+          <div class="chart-scroll">
+            <svg
+              class="chart-svg"
+              viewBox="0 0 680 205"
+              role="img"
+              aria-labelledby="chart-title chart-description"
+            >
+              <title id="chart-title">Movimentações de estoque nos últimos sete dias</title>
+              <desc id="chart-description">
+                Gráfico de linha comparando o total diário de entradas e saídas do seu estoque.
+              </desc>
+              <g class="chart-grid">
+                <path d="M35 32H665M35 72H665M35 112H665M35 152H665" />
+                <path
+                  d="M35 32V152M140 32V152M245 32V152M350 32V152M455 32V152M560 32V152M665 32V152"
+                  class="chart-grid-vertical"
+                />
+              </g>
+              <g class="chart-y-labels">
+                <text x="8" y="36">{{ chartScale() }}</text>
+                <text x="8" y="76">{{ (chartScale() * 0.67).toFixed(0) }}</text>
+                <text x="8" y="116">{{ (chartScale() * 0.33).toFixed(0) }}</text>
+                <text x="8" y="156">0</text>
+              </g>
+              <path class="chart-area chart-area-in" [attr.d]="entriesAreaPath()" />
+              <path class="chart-line chart-line-in" [attr.d]="entriesPath()" />
+              <path class="chart-line chart-line-out" [attr.d]="exitsPath()" />
+              @for (point of chartPoints(); track point.x) {
+                <circle class="chart-point-in" [attr.cx]="point.x" [attr.cy]="point.y" r="4" />
+              }
+              @for (point of movementPoints(); track point.x) {
+                <circle class="chart-point-out" [attr.cx]="point.x" [attr.cy]="point.y" r="4" />
+              }
+              @for (date of chartDates(); track date; let i = $index) {
+                <text class="chart-x-label" [attr.x]="30 + i * 102" y="181">{{ date }}</text>
+              }
+            </svg>
+          </div>
+        </article>
+
+        <article class="panel low-stock-panel">
+          <div class="panel-heading">
+            <div>
+              <h2>Estoque baixo</h2>
+              <p>Produtos chegando ao limite mínimo</p>
+            </div>
+            <span class="stock-count">{{ summary()?.itens_estoque_baixo ?? 0 }} itens</span>
+          </div>
+          <ul class="stock-list">
+            @for (item of lowStockItems(); track item.id) {
+              <li class="stock-item">
+                <div class="stock-product">
+                  <span class="stock-alert-icon" aria-hidden="true">!</span>
+                  <span class="stock-name">{{ item.nome }}</span>
+                </div>
+                <div class="stock-amount">
+                  <span>{{ item.quantidade }} {{ item.unit }}</span>
+                  <span class="stock-meter" aria-hidden="true"
+                    ><i [style.width.%]="item.level"></i
+                  ></span>
+                </div>
+              </li>
+            }
+            @if (!loading() && lowStockItems().length === 0) {
+              <li class="stock-empty">Nenhum produto abaixo do estoque mínimo.</li>
+            }
+          </ul>
+          <button
+            class="panel-footer-link"
+            type="button"
+            (click)="showSectionNotice('Catálogo de produtos')"
+          >
+            Revisar produtos
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h12m-5-5 5 5-5 5" /></svg>
+          </button>
+        </article>
+      </section>
+
+      <section class="panel recent-panel" aria-labelledby="recent-title">
+        <div class="panel-heading recent-heading">
+          <div>
+            <h2 id="recent-title">Movimentações recentes</h2>
+            <p>As últimas atualizações feitas no seu estoque</p>
+          </div>
+          <button class="text-action" type="button" (click)="showSectionNotice('Histórico')">
+            Ver histórico
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h12m-5-5 5 5-5 5" /></svg>
+          </button>
+        </div>
+        <div class="movement-list">
+          @for (movement of recentMovements(); track movement.id) {
+            <article class="movement-row">
+              <span
+                class="movement-icon"
+                [class.movement-icon-entry]="movement.type === 'entry'"
+                [class.movement-icon-exit]="movement.type === 'exit'"
+              >
+                @if (movement.type === 'entry') {
+                  <svg viewBox="0 0 20 20" aria-hidden="true">
+                    <path d="M10 4v12m-5-5 5 5 5-5" />
+                  </svg>
+                } @else {
+                  <svg viewBox="0 0 20 20" aria-hidden="true">
+                    <path d="M10 16V4m-5 5 5-5 5 5" />
+                  </svg>
+                }
+              </span>
+              <div class="movement-description">
+                <strong
+                  >{{ movement.detail }} <span>{{ movement.produto }}</span></strong
+                >
+                <span>{{ movement.time }} · {{ movement.date }}</span>
+              </div>
+              <span
+                class="movement-quantity"
+                [class.quantity-entry]="movement.type === 'entry'"
+                [class.quantity-exit]="movement.type === 'exit'"
+                >{{ movement.quantity }}</span
+              >
+              <svg class="movement-chevron" viewBox="0 0 20 20" aria-hidden="true">
+                <path d="m7 4 6 6-6 6" />
+              </svg>
+            </article>
+          }
+          @if (!loading() && recentMovements().length === 0) {
+            <p class="stock-empty">Nenhuma movimentação registrada ainda.</p>
+          }
+        </div>
+      </section>
+
+      <footer class="dashboard-footer">
+        <span>Qorvus <span aria-hidden="true">·</span> Gestão de estoque simplificada</span>
+        <span>Prévia demonstrativa · Dados ilustrativos</span>
+      </footer>
+    </div>
+  </main>
+</div>

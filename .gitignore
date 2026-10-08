@@ -13,6 +13,9 @@ dist/
 build/
 out/
 .next/
+frontend/dist/
+frontend/.angular/
+frontend/node_modules/
 
 # ==========================================
 # Logs e Cobertura de Testes
@@ -41,3 +44,5 @@ temp/
 *.sqlite
 venv/
 .venv
+__pycache__/
+*.py[cod]

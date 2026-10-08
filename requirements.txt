@@ -5,5 +5,5 @@ pymysql>=1.1.0
 pydantic>=2.6.0
 pydantic-settings>=2.2.0
 email-validator>=2.1.0
-passlib[bcrypt]>=1.7.4
-bcrypt>=4.1.0
+pwdlib[argon2]>=0.2.1
+PyJWT>=2.10.1

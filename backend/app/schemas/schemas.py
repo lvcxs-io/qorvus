@@ -1,6 +1,6 @@
 from datetime import date, datetime
 from typing import Optional
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 # =========================================================================================
 # 1. SCHEMAS DE EMPRESA
@@ -15,8 +15,7 @@ class EmpresaCreate(EmpresaBase):
 class EmpresaResponse(EmpresaBase):
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # =========================================================================================
@@ -38,8 +37,7 @@ class CategoriaUpdate(BaseModel):
 class CategoriaResponse(CategoriaBase):
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # =========================================================================================
@@ -61,8 +59,7 @@ class MarcaUpdate(BaseModel):
 class MarcaResponse(MarcaBase):
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # =========================================================================================
@@ -80,13 +77,12 @@ class UsuarioBase(BaseModel):
     status_ativo: Optional[bool] = True
 
 class UsuarioCreate(UsuarioBase):
-    senha: str = Field(..., min_length=6) # Senha em texto limpo para o CRUD encriptar
+    senha: str = Field(..., min_length=8, max_length=128)
 
 class UsuarioResponse(UsuarioBase):
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
     
 # Não herdamos de UsuarioBase para não se tornar obrigatório todos os campos
 class UsuarioUpdate(BaseModel):
@@ -94,12 +90,11 @@ class UsuarioUpdate(BaseModel):
     cpf: Optional[str] = Field(None, max_length=14)
     cargo: Optional[str] = None  # 'ADMINISTRADOR' ou 'FUNCIONARIO'
     data_admissao: Optional[date] = None
-    empresa_id: Optional[int] = None
     email: Optional[EmailStr] = None
     telefone: Optional[str] = Field(None, max_length=20)
     perfil: Optional[str] = None  # 'ADMINISTRADOR' ou 'FUNCIONARIO'
     status_ativo: Optional[bool] = None
-    senha: Optional[str] = Field(None, min_length=6)  # Opcional se for alterar a senha
+    senha: Optional[str] = Field(None, min_length=8, max_length=128)
 
 
 # =========================================================================================
@@ -135,8 +130,7 @@ class ItemResponse(ItemBase):
     id: int
     status_removido: bool
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # =========================================================================================
@@ -155,5 +149,4 @@ class MovimentacaoResponse(MovimentacaoBase):
     id: int
     data_hora: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

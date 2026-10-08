@@ -1,10 +1,10 @@
-# Qorvus SIS
+# Qorvus
 
-Sistema multiempresa para cadastro e gestão de estoque, usuários, categorias, marcas e movimentações.
+Sistema para cadastro e gestão de estoque, usuários, categorias, marcas e movimentações.
 
 Frontend em Angular 22 com tema monocromático preto e branco. Backend em FastAPI com JWT Bearer e isolamento por empresa.
 
-## O que está pronto
+## O que está pronto até o momento:
 
 - Tela de login + cadastro de empresa com administrador
 - Dashboard com resumo, gráfico de movimentações, estoque baixo e recentes
@@ -42,7 +42,7 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned
 
 No MySQL Workbench ou cliente MySQL, execute nesta ordem, uma vez cada:
 
-1. `migrations/V001__tabelas_base.sql` — cria o schema `qorvus` completo com isolamento multiempresa.
+1. `migrations/V001__tabelas_base.sql` — cria o schema `qorvus` completo (agora com isolamento multiempresa).
 2. `migrations/V002__seed_loja.sql` — cria a Bella Vitta com catálogo e movimentações de demonstração.
 
 > Rode os scripts com o cliente em UTF-8 para preservar acentos. Se aplicar via console com encoding errado, nomes como "Máscara" e "Reparação" podem sair com mojibake.
